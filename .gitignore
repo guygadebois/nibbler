@@ -1,0 +1,4 @@
+nimbler
+*.so
+*.o
+lib2/SDL2/*

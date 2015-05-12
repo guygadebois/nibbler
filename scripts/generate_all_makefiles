@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# (Re-)generate Makefiles, according to current source folders' contents.
+# Trigger generation of all the project's sub-Makefiles.
+#
+# **************************************************************************** #
+
+# Trigger sub-Makefiles generation
+(cd core && bash ../scripts/generate_makefile) &&
+  (cd lib1 && bash ../scripts/generate_makefile) &&
+  (cd lib2 && bash ../scripts/generate_makefile)

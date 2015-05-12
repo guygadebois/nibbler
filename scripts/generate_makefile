@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+# (Re-)generate a Makefile, according to current source folder's contents.
+#
+# **************************************************************************** #
+
+before_source_line_nbr=$(cat .beginmakefile \
+  | grep -n "# CFILES will be inserted here" | head -n 1 | cut -d : -f1)
+
+after_source_line_nbr=$(cat .beginmakefile \
+  | grep -n "# ==================== /CFILES" | head -n 1 \
+  | cut -d : -f1)
+
+makefile_end_line_nbr=$(cat .beginmakefile \
+  | grep -n "# Generated rules  will be inserted here, replacing the following" \
+  | head -n 1 | cut -d : -f1)
+
+
+# Generate CFILES variable
+cat .beginmakefile > Makefile;
+make sources;
+cat .sources >> Makefile
+
+# Generate objects rules
+make depend;
+rm Makefile
+cat .beginmakefile | head -n $((before_source_line_nbr - 1)) >> Makefile
+echo "" >> Makefile
+cat .sources >>Makefile
+echo "" >> Makefile
+cat .beginmakefile | head -n $(($makefile_end_line_nbr - 1)) \
+  | tail -n +$(($after_source_line_nbr + 1)) >> Makefile
+echo "" >> Makefile
+echo "" >> Makefile
+cat .depend >> Makefile;
+
+# Clean tmp files
+rm .depend
+rm .sources
